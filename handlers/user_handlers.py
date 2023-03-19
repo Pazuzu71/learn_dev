@@ -1,6 +1,9 @@
-from aiogram.filters import CommandStart, Command
+from aiogram.filters import CommandStart, Command, StateFilter
 from aiogram.types import Message
-from aiogram import Router, Bot
+from aiogram import Router
+from aiogram.fsm.state import default_state
+
+
 from lexicon.lexicon import LEXICON
 from keyboards.generation_kb import create_generation_kb
 
@@ -8,12 +11,12 @@ from keyboards.generation_kb import create_generation_kb
 router = Router()
 
 
-@router.message(CommandStart())
+@router.message(CommandStart(), StateFilter(default_state))
 async def command_start(msg: Message):
     await msg.answer(text=LEXICON['/start'], reply_markup=create_generation_kb(LEXICON['generation']))
 
 
-@router.message(Command(commands=['help']))
+@router.message(Command(commands=['help']), StateFilter(default_state))
 async def command_help(msg: Message):
     await msg.answer(text=LEXICON['/help'])
 

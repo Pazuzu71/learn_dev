@@ -1,5 +1,10 @@
 import asyncio
+
+
 from aiogram import Bot, Dispatcher
+from aiogram.fsm.storage.memory import MemoryStorage
+
+
 from config_data import config
 from handlers import admin_handlers, user_handlers, other_handlers
 from keyboards.main_menu import set_main_menu
@@ -9,9 +14,12 @@ TOKEN = config.load_config_data().tgbot.token
 
 
 async def main():
+    # инициализируем хранилище
+    storage: MemoryStorage = MemoryStorage()
+
     # создаем экземпляры бота и диспетчера
     bot: Bot = Bot(token=TOKEN, parse_mode='HTML')
-    dp: Dispatcher = Dispatcher()
+    dp: Dispatcher = Dispatcher(storage=storage)
 
     # создаем главное меню
     await set_main_menu(bot)

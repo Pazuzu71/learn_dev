@@ -1,8 +1,8 @@
 from aiogram.filters import BaseFilter
 from aiogram.types import Message
-from config_data.config import load_config_data
 
-# admin_id = int(load_config_data().tgbot.admin)
+
+from config_data.config import load_config_data
 
 
 class IsAdmin(BaseFilter):
