@@ -2,4 +2,5 @@ from aiogram.filters.state import State, StatesGroup
 
 
 class Add(StatesGroup):
-    fill_text = State
+    fill_theme = State()
+    fill_text = State()
