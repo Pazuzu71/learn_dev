@@ -45,16 +45,24 @@ async def process_cancel(callback: CallbackQuery, state: FSMContext):
 # Этот хэндлер проверяет, что выбрана тема из списка тем и просит написать мудрость
 @router.callback_query(StateFilter(Add.fill_theme), Text(text=LEXICON['themes']))
 async def theme_choice(callback: CallbackQuery, state: FSMContext):
-    await state.update_data(gender=callback.data)
-    await callback.message.delete()
-    await callback.message.answer(text=LEXICON['info'])
+    await state.update_data(theme=callback.data)
+    await callback.message.edit_text(text=f'Выбрана тема {callback.data}')
+    await callback.message.answer(text=f'''{LEXICON['info']} на тему {callback.data}''')
     await state.set_state(Add.fill_text)
 
 
-# Этот хэндлер дописывает мудрость в словать, словарь можно куда-то записать
+# Этот хэндлер будет срабатывать, если вместо темы будет что-то другое
+@router.message(StateFilter(Add.fill_theme), ~Text(text=LEXICON['themes']))
+async def is_not_theme(msg: Message):
+    if msg.text:
+        await msg.answer(text=f'''{msg.text} - не похоже на тему. Для отмены нажми "{LEXICON['cancel']}"''')
+    else:
+        await msg.answer(text=f'''Не похоже на тему. Для отмены нажми "{LEXICON['cancel']}"''')
+
+
+# Этот хэндлер дописывает мудрость в словать, словарь нужно куда-то записать
 @router.message(StateFilter(Add.fill_text))
 async def get_info(msg: Message, state: FSMContext):
-    print('111')
     await state.update_data(info=msg.text)
     dct = await state.get_data()
     print(dct)

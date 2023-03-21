@@ -8,12 +8,15 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from config_data import config
 from handlers import admin_handlers, user_handlers, other_handlers
 from keyboards.main_menu import set_main_menu
+from database.scripts import create_tables
 
 
 TOKEN = config.load_config_data().tgbot.token
 
 
 async def main():
+    # создаем таблицы и базу, если еще нет
+    await create_tables()
     # инициализируем хранилище
     storage: MemoryStorage = MemoryStorage()
 

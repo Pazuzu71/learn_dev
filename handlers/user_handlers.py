@@ -19,5 +19,3 @@ async def command_start(msg: Message):
 @router.message(Command(commands=['help']), StateFilter(default_state))
 async def command_help(msg: Message):
     await msg.answer(text=LEXICON['/help'])
-
-
