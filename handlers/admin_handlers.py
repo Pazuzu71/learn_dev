@@ -1,3 +1,6 @@
+from datetime import datetime as dt
+
+
 from aiogram import Router
 from aiogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
 from aiogram.filters import Command, StateFilter, Text
@@ -10,6 +13,7 @@ from lexicon.lexicon import LEXICON
 from filters.IsAdmin import IsAdmin
 from FSM.FSMGroups import Add
 from keyboards.generation_kb import create_generation_kb
+from database.scripts import insert_wisdom
 
 
 admin_id = int(load_config_data().tgbot.admin)
@@ -65,5 +69,5 @@ async def is_not_theme(msg: Message):
 async def get_info(msg: Message, state: FSMContext):
     await state.update_data(info=msg.text)
     dct = await state.get_data()
-    print(dct)
+    await insert_wisdom(*dct.values(), dt.now())
     await state.clear()
