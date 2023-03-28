@@ -11,8 +11,14 @@ class TgBot:
 
 
 @dataclass
+class DB:
+    path: str
+
+
+@dataclass
 class Config:
     tgbot: TgBot
+    database: DB
 
 
 def load_config_data(path: str | None = None):
@@ -22,5 +28,9 @@ def load_config_data(path: str | None = None):
         tgbot=TgBot(
             token=env('TOKEN'),
             admin=env('ADMIN_ID')
+        ),
+        database=DB(
+            path=env('PATH')
+
         )
     )

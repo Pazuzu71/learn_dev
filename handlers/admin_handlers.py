@@ -13,7 +13,7 @@ from lexicon.lexicon import LEXICON
 from filters.IsAdmin import IsAdmin
 from FSM.FSMGroups import Add
 from keyboards.generation_kb import create_generation_kb
-from database.scripts import insert_wisdom
+from database.scripts import insert_wisdom, get_user
 
 
 admin_id = int(load_config_data().tgbot.admin)
@@ -25,7 +25,7 @@ router.message.filter(
 )
 
 
-# Этот хэндлен открывает меню хэлп для админа, в котором есть возможность пополнять базу мудрости
+# Этот хэндлер открывает меню хэлп для админа, в котором есть возможность пополнять базу мудрости
 @router.message(Command(commands=['help']), StateFilter(default_state))
 async def command_help(msg: Message):
     await msg.answer(text=LEXICON['/help_admin'])
@@ -49,6 +49,7 @@ async def process_cancel(callback: CallbackQuery, state: FSMContext):
 # Этот хэндлер проверяет, что выбрана тема из списка тем и просит написать мудрость
 @router.callback_query(StateFilter(Add.fill_theme), Text(text=LEXICON['themes']))
 async def theme_choice(callback: CallbackQuery, state: FSMContext):
+    await state.update_data(user_tg_id=callback.from_user.id)
     await state.update_data(theme=callback.data)
     await callback.message.edit_text(text=f'Выбрана тема {callback.data}')
     await callback.message.answer(text=f'''{LEXICON['info']} на тему {callback.data}''')
@@ -69,5 +70,7 @@ async def is_not_theme(msg: Message):
 async def get_info(msg: Message, state: FSMContext):
     await state.update_data(info=msg.text)
     dct = await state.get_data()
-    await insert_wisdom(*dct.values(), dt.now())
+    print(dct['theme'], dct['info'], dct['user_tg_id'], dt.now())
+    user_id = await get_user(dct['user_tg_id'])
+    await insert_wisdom(dct['theme'], dct['info'], user_id[0], dt.now())
     await state.clear()
