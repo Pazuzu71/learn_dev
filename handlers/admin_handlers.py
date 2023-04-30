@@ -70,7 +70,7 @@ async def is_not_theme(msg: Message):
 async def get_info(msg: Message, state: FSMContext):
     await state.update_data(info=msg.text)
     dct = await state.get_data()
-    print(dct['theme'], dct['info'], dct['user_tg_id'], dt.now())
     user_id = await get_user(dct['user_tg_id'])
     await insert_wisdom(dct['theme'], dct['info'], user_id[0], dt.now())
     await state.clear()
+    await msg.answer(text=LEXICON['/start'], reply_markup=create_generation_kb(LEXICON['generation']))

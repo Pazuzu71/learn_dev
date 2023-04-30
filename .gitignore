@@ -1,3 +1,4 @@
 .idea
 .env
 DB.sqlite
+database/DB.sqlite

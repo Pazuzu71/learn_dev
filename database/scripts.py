@@ -29,7 +29,7 @@ async def create_tables():
 
 
 async def insert_wisdom(theme: str, info: str, user_id: int, date):
-    print(theme, info, user_id, date)
+    # print(theme, info, user_id, date)
     async with aiosqlite.connect(path) as conn:
         try:
             await conn.execute(
@@ -39,6 +39,22 @@ async def insert_wisdom(theme: str, info: str, user_id: int, date):
             await conn.commit()
         except Exception as e:
             print('insert_wisdom', e)
+
+
+async def get_wisdom(wisdom_id: int):
+    async with aiosqlite.connect(path) as conn:
+        wisdom = await conn.execute(
+            '''SELECT wisdom FROM wisdom WHERE wisdom_id = ?''', (wisdom_id,)
+        )
+        return await wisdom.fetchone()
+
+
+async def get_wisdom_max_id():
+    async with aiosqlite.connect(path) as conn:
+        wisdom_max_id = await conn.execute(
+            '''SELECT MAX(wisdom_id) FROM wisdom'''
+        )
+        return await wisdom_max_id.fetchone()
 
 
 async def insert_user(user_tg_id: int, date):
